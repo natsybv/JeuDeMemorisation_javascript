@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+div#tableau_cartes{
+	background: #CCC;
+	border:#999 1px solid;
+	width:700px;
+	height:540PX;
+	padding:20px;
+	Padding-left:40px;
+	Padding-right:0px;
+	Padding-bottom:0px;
+	margin:0px auto;
+}
+div#tableau_cartes > div{
+	background: url(image.jpg) no-repeat;
+	border:#000 1px solid;
+	width:71px;
+	height:71PX;
+	float:left;
+	margin: 10px;
+	padding:20px;
+	font-size:64px;
+	cursor:pointer;
+	text-align:center;
+}
+</style>
+<script>
+var tableau_cartes = ['A','A','B','B','N','N','D','D','T','T','F','F','S','S','I','I','J','J','Y','Y'];
+var valeur_cartes = [];
+var id_cartes = [];
+var carte_retournee = 0;
+Array.prototype.melange_cartes = function(){
+	var i = this.length, j, temp;
+	while(--i > 0){
+	j= Math.floor(Math.random()*(i+1));
+	temp = this[j];
+	this[j] = this[i];
+	this[i] = temp;
+	}
+}
+function indiceLettre(lettre){
+	var indice = -1;
+	for (var i = 0; i <	tableau_cartes.length; i++){
+		if (tableau_cartes[i] == lettre){
+			indice = i;
+			break;
+		}
+	}
+	return indice;
+}
+function swap(indiceLettre1, indiceLettre2){
+	var temp;
+	temp = tableau_cartes[indiceLettre1];
+	tableau_cartes[indiceLettre1] = tableau_cartes[indiceLettre2];
+	tableau_cartes[indiceLettre2] =	temp;
+}
+//Les premières cartes formeront mon prénom.
+function Natsy(){
+	swap(0, indiceLettre('N'));
+	swap(1, indiceLettre('A'));
+	swap(2, indiceLettre('T'));
+	swap(3, indiceLettre('S'));
+	swap(4, indiceLettre('Y'));
+}
+
+function InitTableau(){
+	carte_retournee = 0;
+	var output = '';
+	tableau_cartes.melange_cartes();
+	Natsy();
+	for(var i = 0; i < tableau_cartes.length; i++){
+		output += '<div id ="carte_'+i+'" onclick="tournerCarte(this, \''+tableau_cartes[i]+'\')"></div>';
+	}
+	document.getElementById('tableau_cartes').innerHTML = output;
+}
+function tournerCarte(carte, valeur){
+	if(carte.innerHTML == "" && valeur_cartes.length < 2){
+		carte.style.background = '#FFF';
+		carte.innerHTML = valeur;
+		if(valeur_cartes.length == 0){
+			valeur_cartes.push(valeur);
+			id_cartes.push(carte.id);
+		} else if (valeur_cartes.length == 1){
+			valeur_cartes.push(valeur);
+			id_cartes.push(carte.id);
+			if(valeur_cartes[0] == valeur_cartes[1]){
+			carte_retournee += 2;
+			//après la comparaison on vide les tableaux
+			valeur_cartes = [];
+			id_cartes = [];
+			//on vérifie si toutes les cartes sont retournée
+				if (carte_retournee == tableau_cartes.length){
+					alert("***Bravo tu as fini***\n Rejouer ?");
+					document.getElementById('tableau_cartes').innerHTML = "";
+					InitTableau();
+				}
+			} else {
+				//retourne les 2 cartes face cachée
+				function retournerCarte(){
+					var carte1 = document.getElementById(id_cartes[0]);
+					var carte2 = document.getElementById(id_cartes[1]);
+					carte1.style.background = 'url(image.jpg) no-repeat';
+					carte1.innerHTML = "";
+					carte2.style.background = 'url(image.jpg) no-repeat';
+					carte2.innerHTML = "";
+					//on vide les tableaux
+					valeur_cartes = [];
+					id_cartes = [];
+				}
+				setTimeout(retournerCarte, 700);
+			}
+			
+		}
+	}
+}
+</script>
+</head>
+<body>
+<div id="tableau_cartes"></div>
+<script>InitTableau();</script>
+</body>
+</html>
